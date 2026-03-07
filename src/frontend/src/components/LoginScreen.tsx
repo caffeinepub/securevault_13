@@ -115,7 +115,12 @@ export function LoginScreen() {
       </motion.div>
 
       {/* Footer */}
-      <div className="absolute bottom-6 left-0 right-0 text-center">
+      <div
+        className="absolute bottom-0 left-0 right-0 text-center px-4 pb-6"
+        style={{
+          paddingBottom: "max(1.5rem, env(safe-area-inset-bottom, 1.5rem))",
+        }}
+      >
         <p className="text-xs text-muted-foreground/50">
           © {new Date().getFullYear()}. Built with love using{" "}
           <a

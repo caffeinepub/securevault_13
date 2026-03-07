@@ -170,9 +170,9 @@ export function EntryFormSheet({
       <SheetContent
         data-ocid="entry.dialog"
         side="right"
-        className="w-full sm:max-w-lg overflow-y-auto bg-card border-border"
+        className="w-full sm:max-w-lg bg-card border-border flex flex-col overflow-hidden"
       >
-        <SheetHeader className="pb-4">
+        <SheetHeader className="pb-4 flex-shrink-0">
           <SheetTitle className="flex items-center gap-2 text-foreground">
             {typeDef && <EntryIcon type={selectedType} size="sm" />}
             {isEdit ? "Edit Entry" : "Add New Entry"}
@@ -184,195 +184,205 @@ export function EntryFormSheet({
           </SheetDescription>
         </SheetHeader>
 
-        <form onSubmit={(e) => void handleSubmit(e)} className="space-y-5 py-2">
-          {/* Type selector (add mode only) */}
-          {!isEdit && (
-            <div className="space-y-1.5">
-              <Label className="text-sm font-medium">Entry Type</Label>
-              <Select
-                value={selectedType}
-                onValueChange={(v) => {
-                  setSelectedType(v as EntryType);
-                  setFields({});
-                  setShowSecret({});
-                }}
-              >
-                <SelectTrigger
-                  data-ocid="entry.type.select"
-                  className="bg-secondary/50 border-border"
-                >
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {ENTRY_TYPES.map((t) => (
-                    <SelectItem key={t.type} value={t.type}>
-                      <div className="flex items-center gap-2">
-                        <EntryIcon type={t.type} size="sm" />
-                        {t.label}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-
-          {/* Title */}
-          <div className="space-y-1.5">
-            <Label htmlFor="entry-title" className="text-sm font-medium">
-              Title
-            </Label>
-            <Input
-              id="entry-title"
-              data-ocid="entry.title.input"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder={
-                selectedType === "password"
-                  ? "e.g. GitHub Account"
-                  : selectedType === "note"
-                    ? "e.g. SSH Keys"
-                    : "Entry name"
-              }
-              className="bg-secondary/50 border-border focus:border-primary/50 text-base"
-              autoFocus={!isEdit}
-            />
-          </div>
-
-          {/* Dynamic fields */}
-          {typeDef?.fields.map((field) => (
-            <div key={field.key} className="space-y-1.5">
-              <Label
-                htmlFor={`field-${field.key}`}
-                className="text-sm font-medium"
-              >
-                {field.label}
-              </Label>
-
-              {field.type === "textarea" ? (
-                <Textarea
-                  id={`field-${field.key}`}
-                  value={fields[field.key] ?? ""}
-                  onChange={(e) => setField(field.key, e.target.value)}
-                  placeholder={field.placeholder}
-                  rows={4}
-                  className={`bg-secondary/50 border-border focus:border-primary/50 resize-none text-base ${
-                    field.secret ? "font-mono" : ""
-                  }`}
-                />
-              ) : field.type === "select" ? (
+        <form
+          onSubmit={(e) => void handleSubmit(e)}
+          className="flex flex-col flex-1 overflow-hidden"
+        >
+          <div className="flex-1 overflow-y-auto px-4 sm:px-6 space-y-5 py-2">
+            {/* Type selector (add mode only) */}
+            {!isEdit && (
+              <div className="space-y-1.5">
+                <Label className="text-sm font-medium">Entry Type</Label>
                 <Select
-                  value={fields[field.key] ?? ""}
-                  onValueChange={(v) => setField(field.key, v)}
+                  value={selectedType}
+                  onValueChange={(v) => {
+                    setSelectedType(v as EntryType);
+                    setFields({});
+                    setShowSecret({});
+                  }}
                 >
-                  <SelectTrigger className="bg-secondary/50 border-border">
-                    <SelectValue placeholder={field.placeholder} />
+                  <SelectTrigger
+                    data-ocid="entry.type.select"
+                    className="bg-secondary/50 border-border"
+                  >
+                    <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {field.options?.map((opt) => (
-                      <SelectItem key={opt} value={opt}>
-                        {opt === "national_id"
-                          ? "National ID"
-                          : opt === "drivers_license"
-                            ? "Driver's License"
-                            : opt.charAt(0).toUpperCase() + opt.slice(1)}
+                    {ENTRY_TYPES.map((t) => (
+                      <SelectItem key={t.type} value={t.type}>
+                        <div className="flex items-center gap-2">
+                          <EntryIcon type={t.type} size="sm" />
+                          {t.label}
+                        </div>
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-              ) : (
-                <div className="relative">
-                  <Input
+              </div>
+            )}
+
+            {/* Title */}
+            <div className="space-y-1.5">
+              <Label htmlFor="entry-title" className="text-sm font-medium">
+                Title
+              </Label>
+              <Input
+                id="entry-title"
+                data-ocid="entry.title.input"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder={
+                  selectedType === "password"
+                    ? "e.g. GitHub Account"
+                    : selectedType === "note"
+                      ? "e.g. SSH Keys"
+                      : "Entry name"
+                }
+                className="bg-secondary/50 border-border focus:border-primary/50 text-base"
+                autoFocus={!isEdit}
+              />
+            </div>
+
+            {/* Dynamic fields */}
+            {typeDef?.fields.map((field) => (
+              <div key={field.key} className="space-y-1.5">
+                <Label
+                  htmlFor={`field-${field.key}`}
+                  className="text-sm font-medium"
+                >
+                  {field.label}
+                </Label>
+
+                {field.type === "textarea" ? (
+                  <Textarea
                     id={`field-${field.key}`}
-                    type={
-                      field.secret && !showSecret[field.key]
-                        ? "password"
-                        : field.type === "url"
-                          ? "url"
-                          : "text"
-                    }
                     value={fields[field.key] ?? ""}
                     onChange={(e) => setField(field.key, e.target.value)}
                     placeholder={field.placeholder}
-                    className={`bg-secondary/50 border-border focus:border-primary/50 text-base ${
-                      field.secret ? "font-mono tracking-wide" : ""
-                    } ${field.secret || field.generatePassword ? "pr-20" : ""}`}
-                    autoComplete="off"
-                    data-1p-ignore
-                    data-lpignore="true"
+                    rows={4}
+                    className={`bg-secondary/50 border-border focus:border-primary/50 resize-none text-base ${
+                      field.secret ? "font-mono" : ""
+                    }`}
                   />
-                  <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                    {field.generatePassword && (
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setField(field.key, generatePassword(16))
-                        }
-                        className="text-muted-foreground hover:text-primary transition-colors p-0.5"
-                        title="Generate password"
-                        tabIndex={-1}
-                      >
-                        <RefreshCw className="h-3.5 w-3.5" />
-                      </button>
-                    )}
-                    {field.secret && (
-                      <button
-                        type="button"
-                        onClick={() => toggleSecret(field.key)}
-                        className="text-muted-foreground hover:text-foreground transition-colors p-0.5"
-                        tabIndex={-1}
-                        aria-label={showSecret[field.key] ? "Hide" : "Show"}
-                      >
-                        {showSecret[field.key] ? (
-                          <EyeOff className="h-3.5 w-3.5" />
-                        ) : (
-                          <Eye className="h-3.5 w-3.5" />
-                        )}
-                      </button>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
-
-          {/* Tags */}
-          <div className="space-y-1.5">
-            <Label className="text-sm font-medium">Tags</Label>
-            <div className="min-h-[40px] flex flex-wrap gap-1.5 p-2 rounded-md border border-border bg-secondary/50 focus-within:border-primary/50 transition-colors">
-              {tags.map((tag) => (
-                <Badge
-                  key={tag}
-                  variant="secondary"
-                  className="gap-1 pr-1 text-xs"
-                >
-                  {tag}
-                  <button
-                    type="button"
-                    onClick={() => removeTag(tag)}
-                    className="hover:text-destructive transition-colors ml-0.5"
-                    tabIndex={-1}
+                ) : field.type === "select" ? (
+                  <Select
+                    value={fields[field.key] ?? ""}
+                    onValueChange={(v) => setField(field.key, v)}
                   >
-                    <X className="h-2.5 w-2.5" />
-                  </button>
-                </Badge>
-              ))}
-              <input
-                type="text"
-                value={tagInput}
-                onChange={(e) => setTagInput(e.target.value)}
-                onKeyDown={handleTagKeyDown}
-                onBlur={addTag}
-                placeholder={tags.length === 0 ? "Add tags..." : ""}
-                className="flex-1 min-w-[80px] bg-transparent text-sm outline-none text-foreground placeholder:text-muted-foreground"
-              />
+                    <SelectTrigger className="bg-secondary/50 border-border">
+                      <SelectValue placeholder={field.placeholder} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {field.options?.map((opt) => (
+                        <SelectItem key={opt} value={opt}>
+                          {opt === "national_id"
+                            ? "National ID"
+                            : opt === "drivers_license"
+                              ? "Driver's License"
+                              : opt.charAt(0).toUpperCase() + opt.slice(1)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <div className="relative">
+                    <Input
+                      id={`field-${field.key}`}
+                      type={
+                        field.secret && !showSecret[field.key]
+                          ? "password"
+                          : field.type === "url"
+                            ? "url"
+                            : "text"
+                      }
+                      value={fields[field.key] ?? ""}
+                      onChange={(e) => setField(field.key, e.target.value)}
+                      placeholder={field.placeholder}
+                      className={`bg-secondary/50 border-border focus:border-primary/50 text-base ${
+                        field.secret ? "font-mono tracking-wide" : ""
+                      } ${field.secret || field.generatePassword ? "pr-20" : ""}`}
+                      autoComplete="off"
+                      data-1p-ignore
+                      data-lpignore="true"
+                    />
+                    <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                      {field.generatePassword && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setField(field.key, generatePassword(16))
+                          }
+                          className="text-muted-foreground hover:text-primary transition-colors p-0.5"
+                          title="Generate password"
+                          tabIndex={-1}
+                        >
+                          <RefreshCw className="h-3.5 w-3.5" />
+                        </button>
+                      )}
+                      {field.secret && (
+                        <button
+                          type="button"
+                          onClick={() => toggleSecret(field.key)}
+                          className="text-muted-foreground hover:text-foreground transition-colors p-0.5"
+                          tabIndex={-1}
+                          aria-label={showSecret[field.key] ? "Hide" : "Show"}
+                        >
+                          {showSecret[field.key] ? (
+                            <EyeOff className="h-3.5 w-3.5" />
+                          ) : (
+                            <Eye className="h-3.5 w-3.5" />
+                          )}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+
+            {/* Tags */}
+            <div className="space-y-1.5">
+              <Label className="text-sm font-medium">Tags</Label>
+              <div className="min-h-[40px] flex flex-wrap gap-1.5 p-2 rounded-md border border-border bg-secondary/50 focus-within:border-primary/50 transition-colors">
+                {tags.map((tag) => (
+                  <Badge
+                    key={tag}
+                    variant="secondary"
+                    className="gap-1 pr-1 text-xs"
+                  >
+                    {tag}
+                    <button
+                      type="button"
+                      onClick={() => removeTag(tag)}
+                      className="hover:text-destructive transition-colors ml-0.5"
+                      tabIndex={-1}
+                    >
+                      <X className="h-2.5 w-2.5" />
+                    </button>
+                  </Badge>
+                ))}
+                <input
+                  type="text"
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                  onKeyDown={handleTagKeyDown}
+                  onBlur={addTag}
+                  placeholder={tags.length === 0 ? "Add tags..." : ""}
+                  className="flex-1 min-w-[80px] bg-transparent text-sm outline-none text-foreground placeholder:text-muted-foreground"
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Press Enter or comma to add a tag
+              </p>
             </div>
-            <p className="text-xs text-muted-foreground">
-              Press Enter or comma to add a tag
-            </p>
           </div>
 
-          <SheetFooter className="pt-2 flex gap-2">
+          <SheetFooter
+            className="flex-shrink-0 flex gap-2 px-4 sm:px-6 pt-3 pb-4 mt-2 sticky bottom-0 bg-card border-t border-border"
+            style={{
+              paddingBottom: "max(1rem, env(safe-area-inset-bottom, 1rem))",
+            }}
+          >
             <SheetClose asChild>
               <Button
                 data-ocid="entry.cancel_button"

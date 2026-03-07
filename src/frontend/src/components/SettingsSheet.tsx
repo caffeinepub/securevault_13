@@ -179,7 +179,7 @@ export function SettingsSheet({ open, onOpenChange }: SettingsSheetProps) {
       <SheetContent
         data-ocid="settings.dialog"
         side="right"
-        className="w-full sm:max-w-md overflow-y-auto bg-card border-border"
+        className="w-full sm:max-w-md overflow-y-auto bg-card border-border pb-safe"
       >
         <SheetHeader className="pb-4">
           <SheetTitle className="flex items-center gap-2">
@@ -318,7 +318,7 @@ export function SettingsSheet({ open, onOpenChange }: SettingsSheetProps) {
                     value={currentPw}
                     onChange={(e) => setCurrentPw(e.target.value)}
                     placeholder="Current master password"
-                    className="pr-10 bg-secondary/50 border-border font-mono text-sm"
+                    className="pr-10 bg-secondary/50 border-border font-mono text-base"
                     autoComplete="current-password"
                   />
                   <button
@@ -344,7 +344,7 @@ export function SettingsSheet({ open, onOpenChange }: SettingsSheetProps) {
                     value={newPw}
                     onChange={(e) => setNewPw(e.target.value)}
                     placeholder="New master password (8+ chars)"
-                    className="pr-10 bg-secondary/50 border-border font-mono text-sm"
+                    className="pr-10 bg-secondary/50 border-border font-mono text-base"
                     autoComplete="new-password"
                   />
                   <button
@@ -369,7 +369,7 @@ export function SettingsSheet({ open, onOpenChange }: SettingsSheetProps) {
                   value={confirmPw}
                   onChange={(e) => setConfirmPw(e.target.value)}
                   placeholder="Confirm new password"
-                  className="bg-secondary/50 border-border font-mono text-sm"
+                  className="bg-secondary/50 border-border font-mono text-base"
                   autoComplete="new-password"
                 />
               </div>

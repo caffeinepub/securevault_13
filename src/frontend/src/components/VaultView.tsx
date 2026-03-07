@@ -151,7 +151,7 @@ export function VaultView() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search vault..."
-                className="pl-9 h-9 bg-secondary/50 border-border focus:border-primary/50 text-sm text-base"
+                className="pl-9 h-9 bg-secondary/50 border-border focus:border-primary/50 text-base"
               />
             </div>
 
@@ -193,7 +193,12 @@ export function VaultView() {
         {/* Filter tabs */}
         <div className="sticky top-[57px] z-30 bg-background/95 backdrop-blur-sm border-b border-border">
           <div className="max-w-3xl mx-auto px-4">
-            <div className="flex items-center gap-0.5 overflow-x-auto py-2 scrollbar-hide">
+            <div
+              className="flex items-center gap-0.5 overflow-x-auto py-2 scrollbar-hide"
+              style={
+                { WebkitOverflowScrolling: "touch" } as React.CSSProperties
+              }
+            >
               {FILTER_TABS.map((tab) => {
                 const count =
                   tab.value === "all"
@@ -329,7 +334,10 @@ export function VaultView() {
         </main>
 
         {/* FAB */}
-        <div className="fixed bottom-6 right-6 z-50">
+        <div
+          className="fixed right-6 z-50"
+          style={{ bottom: "max(1.5rem, env(safe-area-inset-bottom, 1.5rem))" }}
+        >
           <Tooltip>
             <TooltipTrigger asChild>
               <Button

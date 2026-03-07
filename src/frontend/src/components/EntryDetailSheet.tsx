@@ -130,7 +130,7 @@ export function EntryDetailSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="w-full sm:max-w-lg overflow-y-auto bg-card border-border"
+        className="w-full sm:max-w-lg overflow-y-auto bg-card border-border pb-safe"
       >
         <SheetHeader className="pb-4">
           <div className="flex items-start justify-between gap-3">
@@ -152,7 +152,7 @@ export function EntryDetailSheet({
                 variant="outline"
                 size="sm"
                 onClick={onEdit}
-                className="h-8 gap-1.5"
+                className="h-9 min-w-[44px] gap-1.5"
               >
                 <Pencil className="h-3.5 w-3.5" />
                 Edit
@@ -163,7 +163,7 @@ export function EntryDetailSheet({
                     data-ocid="entry.delete_button"
                     variant="outline"
                     size="sm"
-                    className="h-8 text-destructive border-destructive/30 hover:bg-destructive/10"
+                    className="h-9 min-w-[44px] text-destructive border-destructive/30 hover:bg-destructive/10"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </Button>
@@ -273,7 +273,7 @@ export function EntryDetailSheet({
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                          className="h-10 w-10 sm:h-8 sm:w-8 text-muted-foreground hover:text-foreground"
                           onClick={() =>
                             void toggleReveal(
                               fieldDef.key,
@@ -296,7 +296,7 @@ export function EntryDetailSheet({
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 text-muted-foreground hover:text-primary"
+                          className="h-10 w-10 sm:h-8 sm:w-8 text-muted-foreground hover:text-primary"
                           onClick={() =>
                             void copyField(
                               fieldDef.key,
@@ -320,7 +320,7 @@ export function EntryDetailSheet({
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                          className="h-10 w-10 sm:h-8 sm:w-8 text-muted-foreground hover:text-foreground"
                           onClick={() =>
                             window.open(value, "_blank", "noopener")
                           }

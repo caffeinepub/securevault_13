@@ -219,7 +219,7 @@ export function MasterPasswordScreen({ mode }: Props) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="relative z-10 w-full max-w-sm mx-auto px-6"
+        className="relative z-10 w-full max-w-sm mx-auto px-4 sm:px-6"
       >
         {/* Header */}
         <div className="flex flex-col items-center gap-3 mb-8">
