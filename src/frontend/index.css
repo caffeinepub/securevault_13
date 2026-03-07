@@ -30,7 +30,7 @@
 /* ── Design Tokens — Vault Light Theme ──────────────────────────────── */
 @layer base {
   :root {
-    --radius: 0.5rem;
+    --radius: 1rem;
 
     /* Base */
     --background: 0.98 0.005 230;

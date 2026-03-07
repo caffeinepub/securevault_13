@@ -212,7 +212,7 @@ export function VaultView() {
                     key={tab.value}
                     data-ocid="vault.filter.tab"
                     onClick={() => setActiveFilter(tab.value)}
-                    className={`flex items-center gap-1.5 px-3 py-2.5 min-h-[44px] rounded-md text-sm whitespace-nowrap transition-colors font-medium ${
+                    className={`flex items-center gap-1.5 px-3 py-2.5 min-h-[44px] rounded-2xl text-sm whitespace-nowrap transition-colors font-medium ${
                       isActive
                         ? "bg-primary/15 text-primary"
                         : "text-muted-foreground hover:text-foreground hover:bg-secondary/60"
@@ -245,9 +245,9 @@ export function VaultView() {
               {["sk1", "sk2", "sk3", "sk4", "sk5"].map((sk) => (
                 <div
                   key={sk}
-                  className="flex items-center gap-3 p-4 rounded-xl border border-border bg-card"
+                  className="flex items-center gap-3 p-4 rounded-3xl border border-border bg-card"
                 >
-                  <Skeleton className="h-9 w-9 rounded-lg flex-shrink-0" />
+                  <Skeleton className="h-9 w-9 rounded-2xl flex-shrink-0" />
                   <div className="flex-1 space-y-2">
                     <Skeleton className="h-4 w-1/3" />
                     <Skeleton className="h-3 w-1/4" />
@@ -262,7 +262,7 @@ export function VaultView() {
           {isError && !isLoading && (
             <div
               data-ocid="vault.error_state"
-              className="flex items-center gap-3 p-4 rounded-xl border border-destructive/30 bg-destructive/10 text-destructive"
+              className="flex items-center gap-3 p-4 rounded-3xl border border-destructive/30 bg-destructive/10 text-destructive"
             >
               <AlertCircle className="h-5 w-5 flex-shrink-0" />
               <p className="text-sm">
@@ -283,7 +283,7 @@ export function VaultView() {
                   data-ocid="vault.empty_state"
                   className="flex flex-col items-center gap-4 py-16 text-center"
                 >
-                  <div className="w-16 h-16 rounded-2xl bg-muted/50 border border-border flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-[2rem] bg-muted/50 border border-border flex items-center justify-center">
                     <Shield className="h-7 w-7 text-muted-foreground" />
                   </div>
                   <div>
@@ -417,7 +417,7 @@ function EntryCard({ entry, onClick }: EntryCardProps) {
     <button
       type="button"
       onClick={onClick}
-      className="w-full text-left flex items-center gap-3 p-4 min-h-[60px] rounded-xl border border-border bg-card entry-card-hover cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      className="w-full text-left flex items-center gap-3 p-4 min-h-[60px] rounded-3xl border border-border bg-card entry-card-hover cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
       <EntryIcon type={entry.entryType} size="md" />
 
@@ -437,7 +437,7 @@ function EntryCard({ entry, onClick }: EntryCardProps) {
                   <Badge
                     key={tag}
                     variant="secondary"
-                    className="text-xs h-4 px-1.5 py-0"
+                    className="text-xs h-4 px-1.5 py-0 rounded-full"
                   >
                     {tag}
                   </Badge>

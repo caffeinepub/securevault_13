@@ -223,7 +223,7 @@ export function MasterPasswordScreen({ mode }: Props) {
       >
         {/* Header */}
         <div className="flex flex-col items-center gap-3 mb-8">
-          <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center vault-glow">
+          <div className="w-16 h-16 rounded-[2rem] bg-primary/10 border border-primary/20 flex items-center justify-center vault-glow">
             {isSetup ? (
               <KeyRound className="h-7 w-7 text-primary" />
             ) : (
@@ -248,7 +248,7 @@ export function MasterPasswordScreen({ mode }: Props) {
             {bioError && (
               <div
                 data-ocid="vault.error_state"
-                className="text-destructive text-sm bg-destructive/10 border border-destructive/20 rounded-md px-3 py-2"
+                className="text-destructive text-sm bg-destructive/10 border border-destructive/20 rounded-2xl px-3 py-2"
               >
                 {bioError}
               </div>
@@ -284,7 +284,7 @@ export function MasterPasswordScreen({ mode }: Props) {
               exit={{ opacity: 0, height: 0 }}
               className="mb-5 overflow-hidden"
             >
-              <div className="rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 space-y-2">
+              <div className="rounded-3xl border border-primary/20 bg-primary/5 px-4 py-3 space-y-2">
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <Fingerprint className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
@@ -429,7 +429,7 @@ export function MasterPasswordScreen({ mode }: Props) {
                 {isLocked && (
                   <div
                     data-ocid="vault.error_state"
-                    className="text-destructive text-sm bg-destructive/10 border border-destructive/20 rounded-md px-3 py-2"
+                    className="text-destructive text-sm bg-destructive/10 border border-destructive/20 rounded-2xl px-3 py-2"
                   >
                     Too many attempts. Try again in {lockoutSeconds}s.
                   </div>
@@ -439,14 +439,14 @@ export function MasterPasswordScreen({ mode }: Props) {
                 {error && !isLocked && (
                   <div
                     data-ocid="vault.error_state"
-                    className="text-destructive text-sm bg-destructive/10 border border-destructive/20 rounded-md px-3 py-2"
+                    className="text-destructive text-sm bg-destructive/10 border border-destructive/20 rounded-2xl px-3 py-2"
                   >
                     {error}
                   </div>
                 )}
 
                 {isSetup && (
-                  <div className="text-xs text-muted-foreground bg-muted/30 rounded-md px-3 py-2.5 space-y-1">
+                  <div className="text-xs text-muted-foreground bg-muted/30 rounded-2xl px-3 py-2.5 space-y-1">
                     <p className="font-medium text-foreground/70">
                       Requirements:
                     </p>

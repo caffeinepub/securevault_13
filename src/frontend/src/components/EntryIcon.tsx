@@ -58,7 +58,7 @@ export function EntryIcon({
 
   return (
     <div
-      className={`flex items-center justify-center rounded-lg ${sizeClasses[size]} ${colors} flex-shrink-0 ${className}`}
+      className={`flex items-center justify-center rounded-2xl ${sizeClasses[size]} ${colors} flex-shrink-0 ${className}`}
     >
       <Icon className={iconSizes[size]} />
     </div>

@@ -38,7 +38,7 @@ export function LoginScreen() {
           className="flex flex-col items-center gap-4"
         >
           <div className="relative">
-            <div className="w-20 h-20 rounded-2xl overflow-hidden bg-primary/10 border border-primary/20 vault-glow">
+            <div className="w-20 h-20 rounded-[2rem] overflow-hidden bg-primary/10 border border-primary/20 vault-glow">
               <img
                 src="/assets/generated/vault-logo-transparent.dim_128x128.png"
                 alt="VaultIC"

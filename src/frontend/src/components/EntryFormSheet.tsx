@@ -343,12 +343,12 @@ export function EntryFormSheet({
             {/* Tags */}
             <div className="space-y-1.5">
               <Label className="text-sm font-medium">Tags</Label>
-              <div className="min-h-[40px] flex flex-wrap gap-1.5 p-2 rounded-md border border-border bg-secondary/50 focus-within:border-primary/50 transition-colors">
+              <div className="min-h-[40px] flex flex-wrap gap-1.5 p-2 rounded-2xl border border-border bg-secondary/50 focus-within:border-primary/50 transition-colors">
                 {tags.map((tag) => (
                   <Badge
                     key={tag}
                     variant="secondary"
-                    className="gap-1 pr-1 text-xs"
+                    className="gap-1 pr-1 text-xs rounded-full"
                   >
                     {tag}
                     <button

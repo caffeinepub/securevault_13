@@ -236,12 +236,12 @@ export function SettingsSheet({ open, onOpenChange }: SettingsSheetProps) {
             </div>
 
             {!bioSupported ? (
-              <p className="text-sm text-muted-foreground bg-muted/30 rounded-md px-3 py-2.5">
+              <p className="text-sm text-muted-foreground bg-muted/30 rounded-2xl px-3 py-2.5">
                 Biometric authentication is not supported on this device.
               </p>
             ) : bioEnrolled ? (
               <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm text-success bg-success/10 border border-success/20 rounded-md px-3 py-2">
+                <div className="flex items-center gap-2 text-sm text-success bg-success/10 border border-success/20 rounded-2xl px-3 py-2">
                   <Fingerprint className="h-3.5 w-3.5 flex-shrink-0" />
                   Biometric unlock is enabled.
                 </div>

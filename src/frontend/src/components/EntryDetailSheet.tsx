@@ -204,7 +204,11 @@ export function EntryDetailSheet({
         {entry.tags.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-5">
             {entry.tags.map((tag) => (
-              <Badge key={tag} variant="secondary" className="text-xs">
+              <Badge
+                key={tag}
+                variant="secondary"
+                className="text-xs rounded-full"
+              >
                 {tag}
               </Badge>
             ))}
@@ -245,7 +249,7 @@ export function EntryDetailSheet({
                   </div>
                   <div className="flex items-start gap-2 group">
                     <div
-                      className={`flex-1 min-w-0 rounded-md px-3 py-2 bg-secondary/40 border border-border/60 text-sm break-all ${
+                      className={`flex-1 min-w-0 rounded-2xl px-3 py-2 bg-secondary/40 border border-border/60 text-sm break-all ${
                         fieldDef.secret ? "font-mono" : ""
                       }`}
                     >

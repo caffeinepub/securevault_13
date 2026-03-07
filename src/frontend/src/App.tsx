@@ -16,7 +16,7 @@ function AppInner() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center animate-pulse-glow">
+          <div className="w-12 h-12 rounded-3xl bg-primary/10 border border-primary/20 flex items-center justify-center animate-pulse-glow">
             <Shield className="h-5 w-5 text-primary" />
           </div>
           <div className="flex items-center gap-2 text-muted-foreground text-sm">
