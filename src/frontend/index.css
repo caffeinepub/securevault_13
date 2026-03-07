@@ -1,0 +1,179 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Vault Fonts ────────────────────────────────────────────────────── */
+@font-face {
+  font-family: "Sora";
+  src: url("/assets/fonts/Sora.woff2") format("woff2");
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/assets/fonts/JetBrainsMono.woff2") format("woff2");
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Geist Mono";
+  src: url("/assets/fonts/GeistMono.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── Design Tokens — Vault Light Theme ──────────────────────────────── */
+@layer base {
+  :root {
+    --radius: 0.5rem;
+
+    /* Base */
+    --background: 0.98 0.005 230;
+    --foreground: 0.15 0.01 240;
+
+    /* Card / Surface */
+    --card: 1 0 0;
+    --card-foreground: 0.15 0.01 240;
+
+    /* Popover */
+    --popover: 0.99 0.003 230;
+    --popover-foreground: 0.15 0.01 240;
+
+    /* Primary — deeper cyan for AA contrast on light bg */
+    --primary: 0.48 0.16 200;
+    --primary-foreground: 0.99 0 0;
+
+    /* Secondary */
+    --secondary: 0.94 0.006 230;
+    --secondary-foreground: 0.25 0.01 240;
+
+    /* Muted */
+    --muted: 0.93 0.007 230;
+    --muted-foreground: 0.48 0.025 225;
+
+    /* Accent */
+    --accent: 0.92 0.012 200;
+    --accent-foreground: 0.42 0.15 200;
+
+    /* Destructive */
+    --destructive: 0.55 0.22 15;
+    --destructive-foreground: 0.99 0 0;
+
+    /* Borders */
+    --border: 0.87 0.008 230;
+    --input: 0.90 0.007 230;
+    --ring: 0.48 0.16 200;
+
+    /* Success */
+    --success: 0.52 0.18 145;
+    --success-foreground: 0.99 0 0;
+
+    /* Warning */
+    --warning: 0.62 0.18 75;
+    --warning-foreground: 0.99 0 0;
+
+    /* Charts */
+    --chart-1: 0.48 0.16 200;
+    --chart-2: 0.52 0.18 145;
+    --chart-3: 0.62 0.18 75;
+    --chart-4: 0.5 0.18 280;
+    --chart-5: 0.55 0.22 15;
+
+    /* Sidebar */
+    --sidebar: 0.96 0.006 230;
+    --sidebar-foreground: 0.15 0.01 240;
+    --sidebar-primary: 0.48 0.16 200;
+    --sidebar-primary-foreground: 0.99 0 0;
+    --sidebar-accent: 0.93 0.008 200;
+    --sidebar-accent-foreground: 0.42 0.15 200;
+    --sidebar-border: 0.87 0.008 230;
+    --sidebar-ring: 0.48 0.16 200;
+
+    /* Vault-specific */
+    --vault-glow: 0.48 0.16 200;
+    --vault-surface: 0.97 0.006 230;
+    --vault-border-subtle: 0.90 0.007 230;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Sora", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: oklch(var(--muted));
+  }
+  ::-webkit-scrollbar-thumb {
+    background: oklch(var(--border));
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: oklch(var(--muted-foreground));
+  }
+}
+
+/* ── Vault Utilities ────────────────────────────────────────────────── */
+@layer utilities {
+  .vault-glow {
+    box-shadow: 0 0 20px oklch(var(--vault-glow) / 0.12),
+      0 0 40px oklch(var(--vault-glow) / 0.04);
+  }
+
+  .vault-glow-strong {
+    box-shadow: 0 0 20px oklch(var(--vault-glow) / 0.25),
+      0 0 60px oklch(var(--vault-glow) / 0.08);
+  }
+
+  .vault-surface {
+    background: oklch(var(--vault-surface));
+    border: 1px solid oklch(var(--vault-border-subtle));
+  }
+
+  .font-mono-vault {
+    font-family: "JetBrains Mono", "Geist Mono", monospace;
+    font-size: 0.875em;
+    letter-spacing: 0.02em;
+  }
+
+  .text-gradient-cyan {
+    background: linear-gradient(
+      135deg,
+      oklch(var(--primary)),
+      oklch(0.38 0.18 185)
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .masked-field {
+    font-family: "JetBrains Mono", monospace;
+    letter-spacing: 0.15em;
+  }
+
+  .entry-card-hover {
+    transition: border-color 0.2s ease, background-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .entry-card-hover:hover {
+    border-color: oklch(var(--primary) / 0.3);
+    box-shadow: 0 0 12px oklch(var(--primary) / 0.06);
+  }
+}
