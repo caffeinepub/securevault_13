@@ -1,12 +1,45 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { VaultEntry } from "../backend.d";
+import type { VaultEntry, backendInterface } from "../backend.d";
+import { createActorWithConfig } from "../config";
+import { getSecretParameter } from "../utils/urlParams";
 import { useActor } from "./useActor";
+import { useInternetIdentity } from "./useInternetIdentity";
 
 // ── Query keys ──────────────────────────────────────────────────────────
 
 export const VAULT_KEYS = {
   entries: ["vault", "entries"] as const,
 };
+
+/** Re-fetch a fresh authenticated actor, bypassing any stale anonymous cache. */
+async function getFreshActor(
+  queryClient: ReturnType<typeof useQueryClient>,
+  identity: ReturnType<typeof useInternetIdentity>["identity"],
+): Promise<backendInterface> {
+  if (!identity) {
+    throw new Error("Not authenticated — please sign in again");
+  }
+
+  const actorOptions = {
+    agentOptions: { identity },
+  };
+
+  // createActorWithConfig returns a richer type that includes internal methods;
+  // we cast via unknown so both sides are satisfied.
+  const actor = (await createActorWithConfig(
+    actorOptions,
+  )) as unknown as backendInterface & {
+    _initializeAccessControlWithSecret(secret: string): Promise<void>;
+  };
+  const adminToken = getSecretParameter("caffeineAdminToken") || "";
+  await actor._initializeAccessControlWithSecret(adminToken);
+
+  // Update the cache so subsequent reads use this actor
+  const principalKey = identity.getPrincipal().toString();
+  queryClient.setQueryData(["actor", principalKey], actor);
+
+  return actor as backendInterface;
+}
 
 // ── Queries ─────────────────────────────────────────────────────────────
 
@@ -26,7 +59,8 @@ export function useGetEntries() {
 // ── Mutations ────────────────────────────────────────────────────────────
 
 export function useCreateEntry() {
-  const { actor } = useActor();
+  const { actor, isFetching } = useActor();
+  const { identity } = useInternetIdentity();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -41,8 +75,17 @@ export function useCreateEntry() {
       encryptedPayload: string;
       tags: string[];
     }) => {
-      if (!actor) throw new Error("Not authenticated");
-      return actor.createEntry(entryType, title, encryptedPayload, tags);
+      // Use the cached actor if it's ready, otherwise mint a fresh authenticated one
+      const resolvedActor =
+        !isFetching && actor
+          ? actor
+          : await getFreshActor(queryClient, identity);
+      return resolvedActor.createEntry(
+        entryType,
+        title,
+        encryptedPayload,
+        tags,
+      );
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: VAULT_KEYS.entries });
@@ -51,7 +94,8 @@ export function useCreateEntry() {
 }
 
 export function useUpdateEntry() {
-  const { actor } = useActor();
+  const { actor, isFetching } = useActor();
+  const { identity } = useInternetIdentity();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -66,8 +110,11 @@ export function useUpdateEntry() {
       encryptedPayload: string;
       tags: string[];
     }) => {
-      if (!actor) throw new Error("Not authenticated");
-      return actor.updateEntry(id, title, encryptedPayload, tags);
+      const resolvedActor =
+        !isFetching && actor
+          ? actor
+          : await getFreshActor(queryClient, identity);
+      return resolvedActor.updateEntry(id, title, encryptedPayload, tags);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: VAULT_KEYS.entries });
@@ -76,13 +123,17 @@ export function useUpdateEntry() {
 }
 
 export function useDeleteEntry() {
-  const { actor } = useActor();
+  const { actor, isFetching } = useActor();
+  const { identity } = useInternetIdentity();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (id: string) => {
-      if (!actor) throw new Error("Not authenticated");
-      return actor.deleteEntry(id);
+      const resolvedActor =
+        !isFetching && actor
+          ? actor
+          : await getFreshActor(queryClient, identity);
+      return resolvedActor.deleteEntry(id);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: VAULT_KEYS.entries });

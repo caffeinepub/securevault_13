@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
 import { useVault } from "@/contexts/VaultContext";
+import { useActor } from "@/hooks/useActor";
 import { useCreateEntry, useUpdateEntry } from "@/hooks/useQueries";
 import { encryptPayload, generatePassword } from "@/lib/crypto";
 import {
@@ -46,6 +47,7 @@ export function EntryFormSheet({
   editEntry,
 }: EntryFormSheetProps) {
   const { cryptoKey } = useVault();
+  const { isFetching: isActorFetching } = useActor();
   const createMutation = useCreateEntry();
   const updateMutation = useUpdateEntry();
 
@@ -160,7 +162,8 @@ export function EntryFormSheet({
     }
   }
 
-  const isSaving = createMutation.isPending || updateMutation.isPending;
+  const isSaving =
+    createMutation.isPending || updateMutation.isPending || isActorFetching;
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
