@@ -5,8 +5,12 @@
  */
 
 const SALT_KEY = "vault_salt";
+const VERIFIER_KEY = "vault_verifier";
 const PBKDF2_ITERATIONS = 310_000;
 const PBKDF2_HASH = "SHA-256";
+
+// A fixed known plaintext we encrypt on setup so we can verify the password on unlock.
+const VERIFIER_PLAINTEXT = "vault-password-verifier-v1";
 
 // ── Typed Uint8Array helper ────────────────────────────────────────────
 
@@ -35,6 +39,47 @@ export function createAndStoreSalt(): Uint8Array<ArrayBuffer> {
 
 export function hasSalt(): boolean {
   return !!localStorage.getItem(SALT_KEY);
+}
+
+// ── Password verifier ──────────────────────────────────────────────────
+
+/**
+ * Encrypt a known plaintext with the derived key and store it.
+ * Called once during vault setup so we can verify the password on future unlocks.
+ */
+export async function storePasswordVerifier(key: CryptoKey): Promise<void> {
+  const enc = new TextEncoder();
+  const iv = fillRandom(makeBytes(12));
+  const ciphertext = await crypto.subtle.encrypt(
+    { name: "AES-GCM", iv },
+    key,
+    enc.encode(VERIFIER_PLAINTEXT),
+  );
+  const combined = makeBytes(iv.byteLength + ciphertext.byteLength);
+  combined.set(iv, 0);
+  combined.set(new Uint8Array(ciphertext), iv.byteLength);
+  localStorage.setItem(VERIFIER_KEY, bytesToBase64(combined));
+}
+
+/**
+ * Returns true if the given key can decrypt the stored verifier blob.
+ * Returns false on wrong password (decrypt fails). Throws on unexpected errors.
+ */
+export async function verifyPasswordKey(key: CryptoKey): Promise<boolean> {
+  const stored = localStorage.getItem(VERIFIER_KEY);
+  if (!stored) {
+    // No verifier stored yet (pre-existing vault) — accept and store one now.
+    return true;
+  }
+  try {
+    const combined = base64ToBytes(stored);
+    const iv = combined.slice(0, 12) as Uint8Array<ArrayBuffer>;
+    const ciphertext = combined.slice(12) as Uint8Array<ArrayBuffer>;
+    await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ciphertext);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 // ── Key derivation ─────────────────────────────────────────────────────

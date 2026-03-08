@@ -14,7 +14,14 @@ import {
   isBiometricSupported,
   verifyBiometric,
 } from "@/lib/biometrics";
-import { createAndStoreSalt, deriveKey, getSalt, hasSalt } from "@/lib/crypto";
+import {
+  createAndStoreSalt,
+  deriveKey,
+  getSalt,
+  hasSalt,
+  storePasswordVerifier,
+  verifyPasswordKey,
+} from "@/lib/crypto";
 import {
   Eye,
   EyeOff,
@@ -137,44 +144,40 @@ export function MasterPasswordScreen({ mode }: Props) {
       const key = await deriveKey(password, salt);
 
       if (mode === "unlock") {
-        // Verify the key is correct by attempting a test operation
-        // (deriveKey itself doesn't verify correctness; we rely on decrypt failing in VaultView)
-        // We reset backoff on success
+        // Verify the derived key against the stored verifier blob.
+        const isCorrect = await verifyPasswordKey(key);
+        if (!isCorrect) {
+          const waitMs = recordFailedAttempt();
+          const newState = getBackoffState();
+          setFailedAttempts(newState.attempts);
+          if (waitMs > 0) {
+            const secs = Math.ceil(waitMs / 1000);
+            setError(
+              `Wrong password. Too many attempts — try again in ${secs}s. (Attempt ${newState.attempts})`,
+            );
+            setLockoutRemaining(waitMs);
+          } else {
+            setError("Wrong password. Please try again.");
+          }
+          return;
+        }
         resetBackoff();
         // Show biometric enrollment prompt if not enrolled
         if (!isBiometricEnrolled() && isBiometricSupported()) {
           setUnlockedKey(key);
           setShowBioPrompt(true);
-          // Actually unlock the vault
           unlock(key);
         } else {
           unlock(key);
         }
       } else {
+        // Setup: store the verifier so future unlocks can verify the password.
+        await storePasswordVerifier(key);
         resetBackoff();
         unlock(key);
       }
     } catch (err) {
-      if (mode === "unlock") {
-        // Record failed attempt and get lockout duration
-        const waitMs = recordFailedAttempt();
-        const newState = getBackoffState();
-        setFailedAttempts(newState.attempts);
-        if (waitMs > 0) {
-          const secs = Math.ceil(waitMs / 1000);
-          setError(
-            `Wrong password. Too many attempts — try again in ${secs}s. (Attempt ${newState.attempts})`,
-          );
-          setLockoutRemaining(waitMs);
-        } else {
-          setError("Wrong password. Please try again.");
-        }
-      } else if (
-        err instanceof DOMException &&
-        (err.name === "OperationError" || err.name === "InvalidAccessError")
-      ) {
-        setError("Wrong password. Please try again.");
-      } else if (err instanceof Error) {
+      if (err instanceof Error) {
         setError(err.message);
       } else {
         setError("Failed to unlock vault. Please try again.");

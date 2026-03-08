@@ -133,7 +133,10 @@ export function VaultView() {
     <TooltipProvider>
       <div className="min-h-screen bg-background flex flex-col">
         {/* Header */}
-        <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur-sm">
+        <header
+          className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur-sm"
+          style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}
+        >
           <div className="max-w-3xl mx-auto px-4 py-3 flex items-center gap-3">
             {/* Logo */}
             <div className="flex items-center gap-2 mr-2">
@@ -191,7 +194,10 @@ export function VaultView() {
         </header>
 
         {/* Filter tabs */}
-        <div className="sticky top-[57px] z-30 bg-background/95 backdrop-blur-sm border-b border-border">
+        <div
+          className="sticky z-30 bg-background/95 backdrop-blur-sm border-b border-border"
+          style={{ top: "calc(57px + env(safe-area-inset-top, 0px))" }}
+        >
           <div className="max-w-3xl mx-auto px-4">
             <div
               className="flex items-center gap-0.5 overflow-x-auto py-2 scrollbar-hide"
