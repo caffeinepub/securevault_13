@@ -10,6 +10,12 @@ export type Option<T> = Some<T> | None;
 export interface MigrationData {
     entries: Array<[Principal, Array<[string, VaultEntry]>]>;
 }
+export interface FailedAttemptLog {
+    timestamp: bigint;
+    userAgent: string;
+    ipAddress: string;
+    attemptNumber: bigint;
+}
 export interface VaultEntry {
     id: string;
     title: string;
@@ -41,8 +47,10 @@ export interface backendInterface {
     getEntries(): Promise<Array<VaultEntry>>;
     getEntriesByTag(tag: string): Promise<Array<VaultEntry>>;
     getEntriesByType(entryType: string): Promise<Array<VaultEntry>>;
+    getFailedAttemptLogs(): Promise<Array<FailedAttemptLog>>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
+    logFailedAttempt(ipAddress: string, userAgent: string, attemptNumber: bigint): Promise<void>;
     migrate(migration: Migration): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     updateEntry(id: string, title: string, encryptedPayload: string, tags: Array<string>): Promise<boolean>;

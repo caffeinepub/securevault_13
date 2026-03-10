@@ -8,7 +8,9 @@ import Runtime "mo:core/Runtime";
 import Iter "mo:core/Iter";
 import MixinAuthorization "authorization/MixinAuthorization";
 import Time "mo:core/Time";
+
 import AccessControl "authorization/access-control";
+
 
 actor {
   // Initialize the access control system
@@ -175,6 +177,50 @@ actor {
       func(entry) { entry.tags.values().any(func(t) { t == tag }) }
     );
     filtered.sort();
+  };
+
+  // Failed attempt log
+  type FailedAttemptLog = {
+    timestamp : Int;
+    ipAddress : Text;
+    userAgent : Text;
+    attemptNumber : Nat;
+  };
+
+  let failedAttemptLogs = Map.empty<Principal, List.List<FailedAttemptLog>>();
+
+  // No authorization check - anyone including guests can log failed attempts
+  // This is intentional as failed attempts occur before successful authentication
+  public shared ({ caller }) func logFailedAttempt(ipAddress : Text, userAgent : Text, attemptNumber : Nat) : async () {
+    let newLog : FailedAttemptLog = {
+      timestamp = Time.now();
+      ipAddress;
+      userAgent;
+      attemptNumber;
+    };
+    let currentLogs = switch (failedAttemptLogs.get(caller)) {
+      case (null) { List.empty<FailedAttemptLog>() };
+      case (?logs) { logs };
+    };
+    // Add new log to the front and keep only the last 100 entries
+    if (currentLogs.size() >= 100) {
+      if (currentLogs.size() > 0) {
+        // Remove last element to keep array size at 100
+        ignore currentLogs.removeLast();
+      };
+    };
+    currentLogs.add(newLog);
+    failedAttemptLogs.add(caller, currentLogs);
+  };
+
+  public query ({ caller }) func getFailedAttemptLogs() : async [FailedAttemptLog] {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can access attempt logs");
+    };
+    switch (failedAttemptLogs.get(caller)) {
+      case (null) { [] };
+      case (?logs) { logs.reverse().toArray() };
+    };
   };
 
   type Migration = {

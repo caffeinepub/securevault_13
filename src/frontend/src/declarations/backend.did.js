@@ -23,6 +23,12 @@ export const VaultEntry = IDL.Record({
   'updatedAt' : IDL.Int,
   'encryptedPayload' : IDL.Text,
 });
+export const FailedAttemptLog = IDL.Record({
+  'timestamp' : IDL.Int,
+  'userAgent' : IDL.Text,
+  'ipAddress' : IDL.Text,
+  'attemptNumber' : IDL.Nat,
+});
 export const MigrationData = IDL.Record({
   'entries' : IDL.Vec(
     IDL.Tuple(IDL.Principal, IDL.Vec(IDL.Tuple(IDL.Text, VaultEntry)))
@@ -48,12 +54,14 @@ export const idlService = IDL.Service({
   'getEntries' : IDL.Func([], [IDL.Vec(VaultEntry)], ['query']),
   'getEntriesByTag' : IDL.Func([IDL.Text], [IDL.Vec(VaultEntry)], ['query']),
   'getEntriesByType' : IDL.Func([IDL.Text], [IDL.Vec(VaultEntry)], ['query']),
+  'getFailedAttemptLogs' : IDL.Func([], [IDL.Vec(FailedAttemptLog)], ['query']),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
       [IDL.Opt(UserProfile)],
       ['query'],
     ),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'logFailedAttempt' : IDL.Func([IDL.Text, IDL.Text, IDL.Nat], [], []),
   'migrate' : IDL.Func([Migration], [], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
   'updateEntry' : IDL.Func(
@@ -81,6 +89,12 @@ export const idlFactory = ({ IDL }) => {
     'updatedAt' : IDL.Int,
     'encryptedPayload' : IDL.Text,
   });
+  const FailedAttemptLog = IDL.Record({
+    'timestamp' : IDL.Int,
+    'userAgent' : IDL.Text,
+    'ipAddress' : IDL.Text,
+    'attemptNumber' : IDL.Nat,
+  });
   const MigrationData = IDL.Record({
     'entries' : IDL.Vec(
       IDL.Tuple(IDL.Principal, IDL.Vec(IDL.Tuple(IDL.Text, VaultEntry)))
@@ -106,12 +120,18 @@ export const idlFactory = ({ IDL }) => {
     'getEntries' : IDL.Func([], [IDL.Vec(VaultEntry)], ['query']),
     'getEntriesByTag' : IDL.Func([IDL.Text], [IDL.Vec(VaultEntry)], ['query']),
     'getEntriesByType' : IDL.Func([IDL.Text], [IDL.Vec(VaultEntry)], ['query']),
+    'getFailedAttemptLogs' : IDL.Func(
+        [],
+        [IDL.Vec(FailedAttemptLog)],
+        ['query'],
+      ),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],
         [IDL.Opt(UserProfile)],
         ['query'],
       ),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'logFailedAttempt' : IDL.Func([IDL.Text, IDL.Text, IDL.Nat], [], []),
     'migrate' : IDL.Func([Migration], [], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
     'updateEntry' : IDL.Func(

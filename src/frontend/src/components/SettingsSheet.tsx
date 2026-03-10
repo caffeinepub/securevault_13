@@ -1,3 +1,4 @@
+import { AccessLogSheet } from "@/components/AccessLogSheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,6 +39,7 @@ import {
   Fingerprint,
   Loader2,
   Lock,
+  ScrollText,
   Settings,
   Shield,
 } from "lucide-react";
@@ -77,6 +79,9 @@ export function SettingsSheet({ open, onOpenChange }: SettingsSheetProps) {
   const [showCurrentPw, setShowCurrentPw] = useState(false);
   const [showNewPw, setShowNewPw] = useState(false);
   const [isChangingPw, setIsChangingPw] = useState(false);
+
+  // Access log state
+  const [logOpen, setLogOpen] = useState(false);
 
   // Biometrics state
   const [isEnrollingBio, setIsEnrollingBio] = useState(false);
@@ -395,6 +400,31 @@ export function SettingsSheet({ open, onOpenChange }: SettingsSheetProps) {
 
           <Separator />
 
+          {/* Access Log */}
+          <div className="space-y-3">
+            <div>
+              <h3 className="text-sm font-semibold flex items-center gap-1.5">
+                <ScrollText className="h-3.5 w-3.5 text-primary" />
+                Access Log
+              </h3>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Review failed unlock attempts for your vault.
+              </p>
+            </div>
+            <Button
+              data-ocid="settings.access_log.open_modal_button"
+              variant="outline"
+              size="sm"
+              onClick={() => setLogOpen(true)}
+              className="w-full border-primary/30 text-primary hover:bg-primary/10"
+            >
+              <ScrollText className="mr-2 h-3.5 w-3.5" />
+              View Access Log
+            </Button>
+          </div>
+
+          <Separator />
+
           {/* Sign out */}
           <div className="space-y-2">
             <h3 className="text-sm font-semibold text-muted-foreground">
@@ -411,6 +441,8 @@ export function SettingsSheet({ open, onOpenChange }: SettingsSheetProps) {
           </div>
         </div>
       </SheetContent>
+
+      <AccessLogSheet open={logOpen} onOpenChange={setLogOpen} />
     </Sheet>
   );
 }

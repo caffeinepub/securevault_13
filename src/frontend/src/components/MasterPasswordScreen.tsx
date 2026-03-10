@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useVault } from "@/contexts/VaultContext";
+import { useActor } from "@/hooks/useActor";
 import {
   getBackoffState,
   getLockoutRemainingMs,
@@ -41,6 +42,7 @@ interface Props {
 
 export function MasterPasswordScreen({ mode }: Props) {
   const { unlock, refreshBiometricStatus } = useVault();
+  const { actor } = useActor();
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [showPw, setShowPw] = useState(false);
@@ -150,6 +152,24 @@ export function MasterPasswordScreen({ mode }: Props) {
           const waitMs = recordFailedAttempt();
           const newState = getBackoffState();
           setFailedAttempts(newState.attempts);
+
+          // Log the failed attempt to the backend (fire-and-forget)
+          void (async () => {
+            try {
+              const ip = await fetch("https://api.ipify.org?format=json")
+                .then((r) => r.json() as Promise<{ ip: string }>)
+                .then((d) => d.ip)
+                .catch(() => "Unknown");
+              await actor?.logFailedAttempt(
+                ip,
+                navigator.userAgent,
+                BigInt(newState.attempts),
+              );
+            } catch {
+              // Silently ignore logging errors — never block the UI
+            }
+          })();
+
           if (waitMs > 0) {
             const secs = Math.ceil(waitMs / 1000);
             setError(

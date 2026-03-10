@@ -10,6 +10,12 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export interface FailedAttemptLog {
+  'timestamp' : bigint,
+  'userAgent' : string,
+  'ipAddress' : string,
+  'attemptNumber' : bigint,
+}
 export interface Migration {
   'data' : [] | [MigrationData],
   'name' : string,
@@ -41,8 +47,10 @@ export interface _SERVICE {
   'getEntries' : ActorMethod<[], Array<VaultEntry>>,
   'getEntriesByTag' : ActorMethod<[string], Array<VaultEntry>>,
   'getEntriesByType' : ActorMethod<[string], Array<VaultEntry>>,
+  'getFailedAttemptLogs' : ActorMethod<[], Array<FailedAttemptLog>>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  'logFailedAttempt' : ActorMethod<[string, string, bigint], undefined>,
   'migrate' : ActorMethod<[Migration], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
   'updateEntry' : ActorMethod<[string, string, string, Array<string>], boolean>,
